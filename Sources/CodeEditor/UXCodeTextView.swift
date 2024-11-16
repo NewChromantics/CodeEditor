@@ -28,8 +28,9 @@ import Highlightr
  */
 final class UXCodeTextView: UXTextView {
   
-  fileprivate let highlightr = Highlightr()
-    
+	//	highlightr now provided from higher level
+	var highlightr : Highlightr?
+	
     var customBackgroundColor: NSColor? = nil
   
   private var hlTextStorage : CodeAttributedString? {
@@ -63,7 +64,7 @@ final class UXCodeTextView: UXTextView {
     }
   }
   
-  init() {
+	init(highlightr:Highlightr?) {
     let textStorage = highlightr.flatMap {
                         CodeAttributedString(highlightr: $0)
                       }

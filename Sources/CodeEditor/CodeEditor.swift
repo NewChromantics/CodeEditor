@@ -200,6 +200,7 @@ public struct CodeEditor: View {
   ]
   public static var xmlStyleAutoPairs = [ "<": ">", "\"": "\"", "'": "'" ]
 
+	
 
   /**
    * Configures a CodeEditor View with the given parameters.
@@ -241,8 +242,12 @@ public struct CodeEditor: View {
               inset          : CGSize?                       = nil,
               allowsUndo     : Bool                          = true,
               autoscroll     : Bool                          = true,
-              backgroundColor: NSColor?                      = nil)
+              backgroundColor: NSColor?                      = nil,
+			  highlightr : Highlightr? = nil
+			  
+  )
   {
+	  self.highlightr = highlightr
     self.source           = source
     self.selection        = selection
     self.fontSize         = fontSize
@@ -309,6 +314,9 @@ public struct CodeEditor: View {
               backgroundColor: backgroundColor)
   }
   
+	//	gr: dont instantiate here, it will create a new instance every View() render
+	public var highlightr : Highlightr?/* = Highlightr()*/
+
   private var source           : Binding<String>
   private var selection        : Binding<Range<String.Index>>?
   private var fontSize         : Binding<CGFloat>?
@@ -334,7 +342,9 @@ public struct CodeEditor: View {
                                 inset          : inset,
                                 allowsUndo     : allowsUndo,
                                 autoscroll     : autoscroll,
-                                backgroundColor: backgroundColor)
+                                backgroundColor: backgroundColor,
+								highlightr : highlightr
+	)
   }
 }
 

@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Highlightr
 
 #if os(macOS)
   typealias UXViewRepresentable = NSViewRepresentable
@@ -56,7 +57,9 @@ struct UXCodeTextViewRepresentable : UXViewRepresentable {
               inset          : CGSize,
               allowsUndo     : Bool,
               autoscroll     : Bool,
-              backgroundColor: NSColor? = nil)
+              backgroundColor: NSColor? = nil,
+			  highlightr : Highlightr?
+  )
   {
     self.source                = source
     self.selection             = selection
@@ -70,8 +73,10 @@ struct UXCodeTextViewRepresentable : UXViewRepresentable {
     self.allowsUndo            = allowsUndo
     self.autoscroll            = autoscroll
     self.customBackgroundColor = backgroundColor
+	  self.highlightr = highlightr
   }
     
+	private var highlightr : Highlightr? /* do not instantiate a default here, will be created on every view render */
   private var source                 : Binding<String>
   private var selection              : Binding<Range<String.Index>>?
   private var fontSize               : Binding<CGFloat>?
@@ -239,7 +244,8 @@ struct UXCodeTextViewRepresentable : UXViewRepresentable {
 
   #if os(macOS)
     public func makeNSView(context: Context) -> NSScrollView {
-      let textView = UXCodeTextView()
+		//	instantiate here, once, if user didn't provide a Highlightr
+		let textView = UXCodeTextView(highlightr:self.highlightr ?? Highlightr())
       textView.customBackgroundColor = customBackgroundColor
       textView.autoresizingMask   = [ .width, .height ]
       textView.delegate           = context.coordinator
@@ -274,7 +280,8 @@ struct UXCodeTextViewRepresentable : UXViewRepresentable {
       )
     }
     public func makeUIView(context: Context) -> UITextView {
-      let textView = UXCodeTextView()
+		//	instantiate here, once, if user didn't provide a Highlightr
+		let textView = UXCodeTextView(highlightr: self.highlightr ?? Highlightr())
       textView.autoresizingMask   = [ .flexibleWidth, .flexibleHeight ]
       textView.delegate           = context.coordinator
       textView.textContainerInset = edgeInsets
@@ -329,7 +336,9 @@ struct UXCodeTextViewRepresentable_Previews: PreviewProvider {
                                 autoPairs   : [:],
                                 inset       : .init(width: 8, height: 8),
                                 allowsUndo  : true,
-                                autoscroll  : false)
+                                autoscroll  : false,
+								highlightr : nil
+	)
       .frame(width: 200, height: 100)
     
     UXCodeTextViewRepresentable(source: .constant("let a = 5"),
@@ -342,7 +351,8 @@ struct UXCodeTextViewRepresentable_Previews: PreviewProvider {
                                 autoPairs   : [:],
                                 inset       : .init(width: 8, height: 8),
                                 allowsUndo  : true,
-                                autoscroll  : false)
+                                autoscroll  : false,
+								highlightr: nil)
       .frame(width: 200, height: 100)
     
     UXCodeTextViewRepresentable(
@@ -361,7 +371,8 @@ struct UXCodeTextViewRepresentable_Previews: PreviewProvider {
       autoPairs   : [:],
       inset       : .init(width: 8, height: 8),
       allowsUndo  : true,
-      autoscroll  : false
+      autoscroll  : false,
+	  highlightr : nil
     )
     .frame(width: 540, height: 200)
   }
