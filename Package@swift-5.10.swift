@@ -16,8 +16,10 @@ let package = Package(
   
   dependencies: [
     // Temporary, until upstream PR is merged.
-    //.package(url: "https://github.com/raspu/Highlightr", from: "2.1.2")
-    .package(url: "https://github.com/helje5/Highlightr", from: "3.0.2")
+	//	gr: I don't know what PR this is referring to,
+	//		but as of Nov2024, need 2.2.1 of raspu/Highlightr to use highlight.js builds
+	//.package(url: "https://github.com/helje5/Highlightr", from: "2.2.1")
+    .package(url: "https://github.com/raspu/Highlightr", from: "2.2.1")
   ],
            
   targets: [
