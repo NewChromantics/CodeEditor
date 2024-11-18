@@ -7,17 +7,20 @@
 //
 
 import Highlightr
+import SwiftUI	//	Color
 
 #if os(macOS)
   import AppKit
 
   typealias UXTextView          = NSTextView
   typealias UXTextViewDelegate  = NSTextViewDelegate
+  typealias UColor              = NSColor
 #else
   import UIKit
 
   typealias UXTextView          = UITextView
   typealias UXTextViewDelegate  = UITextViewDelegate
+  typealias UColor              = UIColor
 #endif
 
 /**
@@ -31,7 +34,7 @@ final class UXCodeTextView: UXTextView {
 	//	highlightr now provided from higher level
 	var highlightr : Highlightr?
 	
-    var customBackgroundColor: NSColor? = nil
+    var customBackgroundColor: UColor? = nil
   
   private var hlTextStorage : CodeAttributedString? {
     return textStorage as? CodeAttributedString

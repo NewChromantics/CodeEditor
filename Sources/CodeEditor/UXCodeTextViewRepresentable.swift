@@ -57,7 +57,7 @@ struct UXCodeTextViewRepresentable : UXViewRepresentable {
               inset          : CGSize,
               allowsUndo     : Bool,
               autoscroll     : Bool,
-              backgroundColor: NSColor? = nil,
+              backgroundColor: Color? = nil,
 			  highlightr : Highlightr?
   )
   {
@@ -76,11 +76,11 @@ struct UXCodeTextViewRepresentable : UXViewRepresentable {
 	  self.highlightr = highlightr
   }
     
-	private var highlightr : Highlightr? /* do not instantiate a default here, will be created on every view render */
+  private var highlightr : Highlightr? /* do not instantiate a default here, will be created on every view render */
   private var source                 : Binding<String>
   private var selection              : Binding<Range<String.Index>>?
   private var fontSize               : Binding<CGFloat>?
-  private var customBackgroundColor  : NSColor? = nil
+  private var customBackgroundColor  : Color? = nil
   private let language               : CodeEditor.Language?
   private let themeName              : CodeEditor.ThemeName
   private let flags                  : CodeEditor.Flags
@@ -90,6 +90,29 @@ struct UXCodeTextViewRepresentable : UXViewRepresentable {
   private let autoPairs              : [ String : String ]
   private let autoscroll             : Bool
 
+#if os(macOS)
+	private var customBackgroundNSColor : NSColor?
+	{
+		guard let customBackgroundColor else
+		{
+			return nil
+		}
+		//	11 onwards is light/dark mode env variance
+		if #available(macOS 11.0, *)
+		{
+			return NSColor(customBackgroundColor)
+		}
+		else
+		{
+			//	todo: find a conversion approach pre macos11
+			//		no resolve
+			//		no cgcolour extraction
+			return nil
+		}
+	}
+#endif
+
+	
   // The inner `value` is true, exactly when execution is inside
   // the `updateTextView(_:)` method. The `Coordinator` can use this
   // value to guard against update cycles.
@@ -241,12 +264,14 @@ struct UXCodeTextViewRepresentable : UXViewRepresentable {
     textView.isEditable   = flags.contains(.editable)
     textView.isSelectable = flags.contains(.selectable)
   }
-
+	@Environment(\.self) var environment
+	
+	
   #if os(macOS)
     public func makeNSView(context: Context) -> NSScrollView {
 		//	instantiate here, once, if user didn't provide a Highlightr
 		let textView = UXCodeTextView(highlightr:self.highlightr ?? Highlightr())
-      textView.customBackgroundColor = customBackgroundColor
+		textView.customBackgroundColor = customBackgroundNSColor
       textView.autoresizingMask   = [ .width, .height ]
       textView.delegate           = context.coordinator
       textView.allowsUndo         = allowsUndo
@@ -268,7 +293,7 @@ struct UXCodeTextViewRepresentable : UXViewRepresentable {
       if textView.delegate !== context.coordinator {
         textView.delegate = context.coordinator
       }
-      textView.customBackgroundColor = customBackgroundColor
+      textView.customBackgroundColor = customBackgroundNSColor
       textView.textContainerInset = inset
       updateTextView(textView)
     }

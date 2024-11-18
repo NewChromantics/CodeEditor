@@ -242,7 +242,7 @@ public struct CodeEditor: View {
               inset          : CGSize?                       = nil,
               allowsUndo     : Bool                          = true,
               autoscroll     : Bool                          = true,
-              backgroundColor: NSColor?                      = nil,
+              backgroundColor: Color?                      = nil,
 			  highlightr : Highlightr? = nil
 			  
   )
@@ -299,7 +299,7 @@ public struct CodeEditor: View {
               autoPairs      : [ String : String ]? = nil,
               inset          : CGSize?              = nil,
               allowsUndo     : Bool                 = true,
-              backgroundColor: NSColor?             = nil)
+              backgroundColor: Color?             = nil)
   {
     assert(!flags.contains(.editable), "Editing requires a Binding")
     self.init(source         : .constant(source),
@@ -328,7 +328,7 @@ public struct CodeEditor: View {
   private let inset            : CGSize
   private let allowsUndo       : Bool
   private let autoscroll       : Bool
-  private let backgroundColor  : NSColor?
+  private let backgroundColor  : Color?
 
   public var body: some View {
     UXCodeTextViewRepresentable(source         : source,
